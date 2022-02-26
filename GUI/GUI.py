@@ -1,37 +1,45 @@
 import PySimpleGUI as sg
+from time import sleep
+import os
+import sys
+script_dir = os.path.dirname( __file__ )
+func_dir = os.path.join(script_dir, "..", "Functions")
+sys.path.append(func_dir)
+import Functions.main_functions as func
 
-class tela:
+class screen:
     def __init__(self):
         """
-        Configurações iniciais da GUI
+        GUI Starting configs
         
         """
+
+
+
         sg.theme(new_theme="DarkPurple1")
+
         layout = [
-            [sg.Text('Usuario:',),sg.Input(size=(40,1),key="user")],
-            [sg.Text('Senha:',size=(6,0)),sg.Input(size=(40,1),password_char="*",key="password")],
-            [sg.Text('Palavra chave:'),sg.Input(size=(20,0),key="keyword")],
-            [sg.Text('Por quantas paginas o robo deve passar? '),sg.Slider(range=(1, 10),default_value=1,orientation='h',key="people_loop")],
-            [sg.Button('Iniciar o robô')],
+            [sg.Text('Keyword:'),sg.Input(size=(20,0),key="keyword")],
+            [sg.Text('How many pages should the bot do? '),sg.Slider(range=(1, 10),default_value=1,orientation='h',key="people_loop")],
+            [sg.Button('Start')],
             [sg.Output(size=(65,20))]
         ]
-        self.janela = sg.Window("LinkedIn Auto-connect", layout, size=(400,300), element_justification="center")
+        self.window = sg.Window("LinkedIn Auto-connect", layout, size=(400,300), element_justification="center")
 
-    def iniciar(self):
+    def run(self):
         """
-        Inicia o programa através da GUI
+        Start the program's interface
 
         """
         while True:
-            self.events, self.values = self.janela.Read()
+            self.events, self.values = self.window.Read()
             if self.events == sg.WIN_CLOSED:
                 break
             else:
-                self.bot = Linkedin_autoConnect()
-                self.bot.rodar(self.values['user'], self.values['password'], self.values['keyword'], self.values['people_loop'])
+                bot = func.Linkedin_autoConnect()
+                bot.run(self.values['keyword'], self.values['people_loop'])
                 break
-        sleep(5)
-        self.janela.Close()
+        self.window.Close()
 
-GUI = tela()
-GUI.iniciar()
+    def popup(self):
+        sg.Popup("Click me whe you are logged in :)", keep_on_top=True)
